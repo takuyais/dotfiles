@@ -1,0 +1,13 @@
+# Ref.: http://git-scm.com/docs/git-config
+# vim: set noet:
+[user]
+	name = takuyais
+	email = @takuyais
+[core]
+	editor = vim --nofork -c 'set fenc=utf-8' +1
+	excludesFile = ~/.gitignore_global
+[diff]
+	tool = vimdiff
+[merge]
+	tool = vimdiff
+	conflictStyle = diff3

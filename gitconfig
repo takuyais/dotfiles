@@ -1,0 +1,18 @@
+# Ref.: http://git-scm.com/docs/git-config
+# vim: set noet:
+[core]
+	autocrlf = false
+	safecrlf = true
+[color]
+	ui = true
+	diff = auto
+[difftool]
+	prompt = false
+[mergetool]
+	prompt = false
+[gui]
+	encoding = utf-8
+[include]
+	path = ~/.gitconfig.local
+[alias]
+	graph = log --graph --decorate --oneline
