@@ -4,7 +4,7 @@
 	name = takuyais
 	email = @takuyais
 [core]
-	editor = vim --nofork -c 'set fenc=utf-8' +1
+	editor = ~/local/bin/sencom
 	excludesFile = ~/.gitignore_global
 [diff]
 	tool = vimdiff
