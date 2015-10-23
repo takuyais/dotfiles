@@ -16,3 +16,8 @@
 	path = ~/.gitconfig.local
 [alias]
 	graph = log --graph --decorate --oneline
+	st = status
+	co = checkout
+	ad = add
+	ci = commit
+	dc = diff --cached
