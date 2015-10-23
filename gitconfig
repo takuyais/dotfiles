@@ -3,6 +3,8 @@
 [core]
 	autocrlf = false
 	safecrlf = true
+	# Avoid quoting multibyte characters.
+	quotepath = false
 [color]
 	ui = true
 	diff = auto
