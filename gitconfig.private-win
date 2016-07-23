@@ -1,0 +1,21 @@
+# Ref.: http://git-scm.com/docs/git-config
+# vim: set noet:
+[user]
+	name = takuyais
+	email = @takuyais
+[core]
+	editor = code --new-window --wait
+	excludesFile = ~/gitignore_global.txt
+	whitespace = trailing-space,space-before-tab,cr-at-eol
+[diff]
+	tool = vscode
+[difftool "vscode"]
+	cmd = code --new-window --wait --diff \"$LOCAL\" \"$REMOTE\"
+#[merge]
+#	tool = WinMerge
+#[mergetool "WinMerge"]
+#	cmd = 'full/path/to/WinMergeU.exe' -r -u -dl \"LOCAL\" -dr \"REMOTE\" \"$LOCAL\" \"$REMOTE\" \"$MERGED\"
+#	trustExitCode = false
+#[http]
+#	proxy = http://example.com:8080/
+#	postBuffer = 104857600 # 100MiB
