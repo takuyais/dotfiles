@@ -18,9 +18,12 @@
 	path = ~/.gitconfig.local
 [alias]
 	graph = log --graph --decorate --oneline
-	st = status
+	st = status --short
 	co = checkout
 	ad = add
 	ci = commit
 	dc = diff --cached
 	br = branch
+	sre = svn rebase
+	sdc = svn dcommit
+	sta = stash
