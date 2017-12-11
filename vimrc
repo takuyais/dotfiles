@@ -14,7 +14,6 @@ function! s:DefineBundles()
   return
 endfunction
 
-set nocompatible
 set nobackup
 set noundofile
 set number
@@ -35,6 +34,9 @@ set timeout timeoutlen=500 ttimeoutlen=-1
 set formatoptions+=mB
 set nrformats=hex
 set virtualedit=block
+set backspace=indent,eol,start
+set tags+=./tags;
+set autochdir
 
 " Tab
 set tabstop=4 softtabstop=4 shiftwidth=4
@@ -49,6 +51,7 @@ set cinoptions+=g0,j1,J1
 
 " Search
 set hlsearch | nohlsearch
+set incsearch
 set ignorecase
 set smartcase
 set wrapscan
@@ -72,6 +75,12 @@ colorscheme desert
 "let b:dot_alt = has('win32') ? '_' : '.'
 "execute 'source' fnameescape(fnamemodify(expand('$MYVIMRC'), ':p:h') . '/' .
 "      \b:dot_alt . 'vimrc.color')
+
+" Fold
+augroup vimrc
+  autocmd BufReadPre * setlocal foldmethod=indent
+  autocmd BufWinEnter * if &fdm == 'indent' | setlocal foldmethod=manual | endif
+augroup END
 
 " Custom key mapping
 "" Cancel highlight search
@@ -131,10 +140,12 @@ endif
 let g:Align_xstrlen=3
 
 "" emmet-vim
-let g:user_emmet_leader_key='<C-Z>'
+"let g:user_emmet_leader_key='<C-Z>'
 
 filetype plugin indent on
 syntax on
+
+source $VIMRUNTIME/macros/matchit.vim
 
 " vim:set ts=2 sts=2 sw=2:
 

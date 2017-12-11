@@ -27,5 +27,9 @@ set iminsert=0
 set imsearch=-1
 inoremap <silent> <ESC> <ESC>:set iminsert=0<CR>
 
+if has('kaoriya')
+  autocmd GUIEnter * set transparency=220
+endif
+
 " vim:set ts=2 sts=2 sw=2:
 
