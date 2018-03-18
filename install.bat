@@ -4,6 +4,7 @@ setlocal
 
 cd /d "%userprofile%"
 mklink .gitconfig dotfiles\gitconfig
+mklink .gitconfig.local dotfiles\gitconfig.local
 mklink _vimrc dotfiles\vimrc
 mklink _gvimrc dotfiles\gvimrc
 
