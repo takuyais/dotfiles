@@ -17,13 +17,18 @@
 [include]
 	path = ~/.gitconfig.local
 [alias]
-	graph = log --graph --decorate --oneline
-	st = status --short
-	co = checkout
 	ad = add
-	ci = commit
-	dc = diff --cached
 	br = branch
+	cam = commit --amend
+	camm = commit --amend -C@
+	ci = commit
+	co = checkout
+	dc = diff --cached
+	graph = log --graph --format='%C(auto)%h%d %an %s'
+	root = rev-parse --show-toplevel
+	st = status --short
 	sre = svn rebase
-	sdc = svn dcommit
+	sl = "!f() { if [ $# -eq 0 ]; then git stash list; else n=$1; shift; git show stash@{$n} \"$@\"; fi; }; f"
 	sta = stash
+[status]
+	relativePaths = true
