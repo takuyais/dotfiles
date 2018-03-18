@@ -16,6 +16,8 @@ endfunction
 
 set nobackup
 set noundofile
+set directory-=.
+set directory^=~/vimfiles/tmp//
 set number
 set hidden
 set colorcolumn=100,+0
@@ -85,15 +87,6 @@ augroup END
 " Custom key mapping
 "" Cancel highlight search
 nnoremap <silent> <Esc><Esc> :<C-U>nohlsearch<CR>
-
-" Move window
-nnoremap s <Nop>
-nnoremap sh <C-W>h
-nnoremap sj <C-W>j
-nnoremap sk <C-W>k
-nnoremap sl <C-W>l
-nnoremap so <C-W>o
-nnoremap sc <C-W>c
 
 "" Additional undo revision
 inoremap <CR> <C-G>u<CR>
