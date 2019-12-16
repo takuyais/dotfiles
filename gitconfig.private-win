@@ -5,7 +5,7 @@
 	email = @takuyais
 [core]
 	editor = code --new-window --wait
-	excludesFile = ~/gitignore_global.txt
+	excludesFile = ~/.gitignore_global
 	whitespace = trailing-space,space-before-tab,cr-at-eol
 [diff]
 	tool = vscode
@@ -19,3 +19,4 @@
 #[http]
 #	proxy = http://example.com:8080/
 #	postBuffer = 104857600 # 100MiB
+#	sslVerify = false

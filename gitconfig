@@ -28,7 +28,7 @@
 	root = rev-parse --show-toplevel
 	st = status --short
 	sre = svn rebase
-	sl = "!f() { if [ $# -eq 0 ]; then git stash list; else n=$1; shift; git show stash@{$n} \"$@\"; fi; }; f"
+	sls = "!f() { if [ $# -eq 0 ]; then git stash list; else n=$1; shift; git show stash@{$n} \"$@\"; fi; }; f"
 	sta = stash
 [status]
 	relativePaths = true
