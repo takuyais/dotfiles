@@ -1,0 +1,16 @@
+# vi: ft=config
+--extras=+fq
+-R
+
+--langmap=javascript:+.vue
+
+--exclude=tags
+
+# Node.js
+--exclude=node_modules
+--exclude=dist
+--exclude=\*.min.\*
+--exclude=\*.map
+
+# Java
+--exclude=target
