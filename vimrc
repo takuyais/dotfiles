@@ -1,4 +1,7 @@
 "scriptencoding utf-8
+" vi: ts=2 sts=2 sw=2
+
+let $LANG = "en"
 
 function! s:DefineBundles()
   call vundle#rc(expand(s:bundle_path))
@@ -16,6 +19,7 @@ endfunction
 
 set nobackup
 set noundofile
+set nofixeol
 set directory-=.
 set directory^=~/vimfiles/tmp//
 set number
@@ -27,6 +31,7 @@ set showmatch
 set laststatus=2
 set statusline=%m#%n\ %<%f\ %y\ %q%([%H%R%W]%)%={%{v:register}}\ '0x%B'\ [%{&ff},%{strlen(&fenc)?&fenc:'-'}%{&bomb?'+BOM':''}]\ %-20.(%l/%L,%c%V%)%P
 set cursorline
+set wildmenu
 set wildmode=list:longest,full
 set clipboard^=unnamed
 if has('unnamedplus')
@@ -38,7 +43,8 @@ set nrformats=hex
 set virtualedit=block
 set backspace=indent,eol,start
 set tags+=./tags;
-set autochdir
+set history=100
+"set autochdir
 
 " Tab
 set tabstop=4 softtabstop=4 shiftwidth=4
@@ -85,10 +91,16 @@ augroup vimrc
 augroup END
 
 " Custom key mapping
-"" Cancel highlight search
+" Cancel highlight search
 nnoremap <silent> <Esc><Esc> :<C-U>nohlsearch<CR>
+nnoremap <silent> <F2> :Lexplore<CR>
+nnoremap <silent> <leader>e :Explore<CR>
+let g:netrw_liststyle = 3
+nnoremap <F5> :buffers<CR>:b<Space>
+nnoremap <leader>b :buffers<CR>:b<Space>
+nnoremap <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
 
-"" Additional undo revision
+" Additional undo revision
 inoremap <CR> <C-G>u<CR>
 inoremap <C-J> <C-G>u<C-J>
 inoremap <BS> <C-G>u<BS>
@@ -104,6 +116,7 @@ inoremap <M-:> <C-R>=strftime("%H:%M:%S")<CR>
 
 cnoremap <C-A> <Home>
 cnoremap <C-U> <C-E><C-U>
+cnoremap <F5> <C-E><C-U>cd %:p:h<CR>
 
 " grep-quickfix
 if has ('quickfix')
@@ -139,6 +152,3 @@ filetype plugin indent on
 syntax on
 
 source $VIMRUNTIME/macros/matchit.vim
-
-" vim:set ts=2 sts=2 sw=2:
-

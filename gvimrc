@@ -1,4 +1,5 @@
 scriptencoding utf-8
+" vim:set ts=2 sts=2 sw=2:
 
 try
   set background=dark
@@ -8,13 +9,13 @@ catch /^Vim\%((\a\+)\)\=:E185/
   colorscheme desert
 endtry
 
-set lines=40 columns=120
+set lines=40 columns=140
 set guioptions-=T
 set guioptions-=m
 
 if has('win32')
-  set guifont=Consolas:h9
-  set guifontwide=MS_Gothic:h9:cSHIFTJIS
+  set guifont=Consolas:h10
+  set guifontwide=MS_Gothic:h10:cSHIFTJIS
 elseif has('unix')
   if system('uname') =~ 'Darwin'
   else
@@ -30,6 +31,3 @@ inoremap <silent> <ESC> <ESC>:set iminsert=0<CR>
 if has('kaoriya')
   autocmd GUIEnter * set transparency=220
 endif
-
-" vim:set ts=2 sts=2 sw=2:
-
