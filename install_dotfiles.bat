@@ -3,10 +3,13 @@ rem Need to run as Administrator
 setlocal
 
 cd /d "%USERPROFILE%"
+mklink .bashrc dotfiles\bashrc
+mklink .aliases_tortoisegit dotfiles\aliases_tortoisegit
 mklink .gitconfig dotfiles\gitconfig
 mklink .gitconfig.local dotfiles\gitconfig.local
 mklink _vimrc dotfiles\vimrc
 mklink _gvimrc dotfiles\gvimrc
+mkdir vimfiles\swap
 mkdir ctags.d\
 mklink ctags.d\config.ctags ..\dotfiles\config.ctags
 
