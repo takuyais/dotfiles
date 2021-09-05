@@ -1,0 +1,13 @@
+# vi: ts=2 sts=2 sw=2 ft=bash
+alias tgitproc='"C:/Program Files/TortoiseGit/bin/TortoiseGitProc.exe"'
+#alias tgit="$(cygpath "$(cmd /c "echo %USERPROFILE%")")/dotfiles/tgit.sh"
+alias tortoisegitmerge='"C:/Program Files/TortoiseGit/bin/TortoiseGitMerge.exe"'
+
+alias tgs="tgit st"
+alias tgl="tgit log"
+alias tglm="tgit log origin/master.."
+alias tgd="tgit dfs"
+alias tgdm="tgit dfs origin/master..."
+
+# Naive command completion
+__git_complete tgit __git_main
