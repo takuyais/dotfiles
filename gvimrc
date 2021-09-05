@@ -14,8 +14,8 @@ set guioptions-=T
 set guioptions-=m
 
 if has('win32')
-  set guifont=Consolas:h10
-  set guifontwide=MS_Gothic:h10:cSHIFTJIS
+  set guifont=Consolas:h11
+  set guifontwide=MS_Gothic:h11:cSHIFTJIS
 elseif has('unix')
   if system('uname') =~ 'Darwin'
   else
@@ -31,3 +31,7 @@ inoremap <silent> <ESC> <ESC>:set iminsert=0<CR>
 if has('kaoriya')
   autocmd GUIEnter * set transparency=220
 endif
+
+"colorscheme zellner
+"set guifont=Consolas:h24
+"set guifontwide=MS_Gothic:h24:cSHIFTJIS

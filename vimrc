@@ -11,6 +11,7 @@ function! s:DefineBundles()
   Plugin 'jiangmiao/simple-javascript-indenter'
   Plugin 'align'
   Plugin 'tpope/vim-surround'
+  Plugin 'tpope/vim-abolish'
   Plugin 'tomasr/molokai'
   Plugin 'mattn/emmet-vim'
 
@@ -21,7 +22,7 @@ set nobackup
 set noundofile
 set nofixeol
 set directory-=.
-set directory^=~/vimfiles/tmp//
+set directory^=~/vimfiles/swap//
 set number
 set hidden
 set colorcolumn=100,+0
@@ -29,7 +30,7 @@ set encoding=utf-8
 set showcmd
 set showmatch
 set laststatus=2
-set statusline=%m#%n\ %<%f\ %y\ %q%([%H%R%W]%)%={%{v:register}}\ '0x%B'\ [%{&ff},%{strlen(&fenc)?&fenc:'-'}%{&bomb?'+BOM':''}]\ %-20.(%l/%L,%c%V%)%P
+set statusline=#%n\ %<%f\ %m%y\ %q%([%H%R%W]%)%={%{v:register}}\ '0x%B'\ [%{&ff}%{&eol?'':',noeol'},%{strlen(&fenc)?&fenc:'-'}%{&bomb?'+BOM':''}]\ %-20.(%l/%LL,\ %vC%)%P
 set cursorline
 set wildmenu
 set wildmode=list:longest,full
@@ -43,7 +44,7 @@ set nrformats=hex
 set virtualedit=block
 set backspace=indent,eol,start
 set tags+=./tags;
-set history=100
+set history=1000
 "set autochdir
 
 " Tab
@@ -114,9 +115,30 @@ inoremap <C-U> <C-G>u<C-U>
 inoremap <M-;> <C-R>=strftime("%Y-%m-%d")<CR>
 inoremap <M-:> <C-R>=strftime("%H:%M:%S")<CR>
 
+" Gnu Readline like shortcuts
 cnoremap <C-A> <Home>
-cnoremap <C-U> <C-E><C-U>
+" Ref: https://unix.stackexchange.com/questions/408980/delete-to-end-of-command-line-in-vim
+" Another solution: https://stackoverflow.com/questions/26310401/in-vim-command-line-mode-how-to-kill-the-line-from-the-current-cursor-position
+cnoremap <C-K> <C-\>e(strpart(getcmdline(), 0, getcmdpos() - 1))<CR>
 cnoremap <F5> <C-E><C-U>cd %:p:h<CR>
+
+" Search for selected text, forwards or backwards.
+" Ref: https://vim.fandom.com/wiki/Search_for_visually_selected_text
+vnoremap <silent> * :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy/<C-R>=&ic?'\c':'\C'<CR><C-R><C-R>=substitute(
+  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gVzv:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent> # :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy?<C-R>=&ic?'\c':'\C'<CR><C-R><C-R>=substitute(
+  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gVzv:call setreg('"', old_reg, old_regtype)<CR>
+
+" git commit message editor
+" Ref: https://qiita.com/ak60414/items/b21b8f9ab976b0edd6ab
+autocmd BufReadPre */.git/COMMIT_EDITMSG,*/.git/TAG_EDITMSG,*/.git/git-rebase-todo
+  \ setlocal fileencoding=utf-8
 
 " grep-quickfix
 if has ('quickfix')
@@ -129,9 +151,9 @@ let s:alt_plugin_path = '$HOME/vimfiles'
 
 "" NeoBundle
 let s:bundle_path =
-      \(isdirectory(expand(s:std_plugin_path)) ? s:std_plugin_path
-      \                                        : s:alt_plugin_path)
-      \. '/bundle'
+  \(isdirectory(expand(s:std_plugin_path)) ? s:std_plugin_path
+  \                                        : s:alt_plugin_path)
+  \. '/bundle'
 
 if has('vim_starting') && executable('git')
   filetype off
