@@ -63,6 +63,9 @@ GetWinHandleByTitle(title="A") {
 ; Disable F1 help
 F1::Return
 
+; Recovery for Alt+vk19
+!Esc::vk19
+
 ; Copy or cut as plain text
 ;^+x::
 ;^+c::
@@ -78,17 +81,26 @@ Clipwait
 Send, ^v
 Return
 
-!q::!F4
+!+q::!F4
+!+4::!F4
 
 RAlt::vk19 ; Hankaku/Zenkaku
 RWin::vk19 ; Hankaku/Zenkaku
 
+#If !WinActive("ahk_exe EXCEL.EXE")
+; Insert the current date, inspired by Excel
+^;::
+SendInput %A_YYYY%-%A_MM%-%A_DD%
+Return
+#If
+
+; PowerPoint specific
+#If WinActive("ahk_exe POWERPNT.EXE")
+; Show format shape dialog
+^1::
+Send, !ho
+Return
+#If
+
 ;#Include %A_ScriptDir%
 #Include *i hhkb.ahk
-
-; MS Office
-;#IfWinActive ahk_exe POWERPNT.EXE
-;; Show format shape dialog
-;^1::
-;Send, !HO
-;Return
