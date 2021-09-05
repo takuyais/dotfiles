@@ -1,0 +1,23 @@
+escape ^Jj
+
+vbell off
+
+# don't display the copyright page
+startup_message off
+
+defscrollback 2000
+
+# enable support for the "alternate screen" capability in all windows
+altscreen on
+
+term screen-256color
+
+# Ref.: https://wiki.archlinux.org/index.php/GNU_Screen#Informative_statusbar
+hardstatus on
+hardstatus alwayslastline '%{= g}[ %{G}%H %{g}][%= %{= w}%?%-Lw%?%{= R}%n*%f %t%?%{= R}(%u)%?%{= w}%+Lw%?%= %{= g}][ %{y}Load: %l %{g}][ %{B}%Y-%m-%d %{W}%c %{g}]'
+
+# Prevent from resizing window size on startup.
+termcapinfo xterm* 'is=\E[r\E[m\E[2J\E[H\E[?7h\E[?1;4;6l'
+
+# Enable scroll
+termcapinfo xterm* ti@:te@
