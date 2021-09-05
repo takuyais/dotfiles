@@ -1,22 +1,53 @@
 # Ref.: http://git-scm.com/docs/git-config
-# vim: set noet:
+# vi: noet
 [user]
 	name = takuyais
 	email = @takuyais
 [core]
-	editor = code --new-window --wait
+	editor = 'C:/Program Files/Vim/vim82/gvim.exe'
+#	editor = code --new-window --wait
 	excludesFile = ~/.gitignore_global
 	whitespace = trailing-space,space-before-tab,cr-at-eol
 [diff]
-	tool = vscode
+#	tool = p4merge
+	tool = WinMerge
+#	tool = vscode
 [difftool "vscode"]
 	cmd = code --new-window --wait --diff \"$LOCAL\" \"$REMOTE\"
 #[merge]
 #	tool = WinMerge
-#[mergetool "WinMerge"]
-#	cmd = 'full/path/to/WinMergeU.exe' -r -u -dl \"LOCAL\" -dr \"REMOTE\" \"$LOCAL\" \"$REMOTE\" \"$MERGED\"
-#	trustExitCode = false
+[mergetool "p4merge"]
+	path = C:/Program Files/Perforce/p4merge.exe
+	# ref.: https://github.com/git/git/blob/master/mergetools/p4merge
+	cmd = "if ! $base_present; then cp -- \"$LOCAL\" \"$BASE\"; create_virtual_base \"$BASE\" \"$REMOTE\"; fi; \"$merge_tool_path\" -le $(case $(file \"$REMOTE\") in \"* with CRLF line terminators\") echo dos;; \"* with CR line terminators\") echo mac;; *) echo unix;; esac) \"$BASE\" \"$REMOTE\" \"$LOCAL\" \"$MERGED\""
+[mergetool "WinMerge"]
+#	cmd = 'C:/Program Files/WinMerge/WinMergeU.exe' -r -u -dl \"LOCAL\" -dr \"REMOTE\" \"$LOCAL\" \"$REMOTE\" \"$MERGED\"
+	trustExitCode = false
 #[http]
 #	proxy = http://example.com:8080/
 #	postBuffer = 104857600 # 100MiB
 #	sslVerify = false
+[credential]
+	helper = manager
+#[credential "helperselector"]
+#	selected = wincred
+[tgit]
+	path = "C:/Program Files/TortoiseGit/bin/TortoiseGitProc.exe"
+[tgit "alias"]
+	dfs = showcompare
+	# fuzzy blame
+	fblame = "!f() { \
+		local revs; \
+		revs=($(git ffind "$@")) || exit 1; \
+		if (( ${#revs[@]} > 1 )); then \
+			echo 'error: ambiguous file path.' >&2; \
+			printf '%s\\n' \"${revs[@]}\" >&2; \
+			exit 1; \
+		fi; \
+		echo \"Found: ${revs[0]}\" >&2; \
+		tgit blame ${revs[0]%%:*} \"${revs[0]##*:}\"; \
+	}; f"
+	ref = show-ref
+	sr = show-ref
+	st = status
+	sta = stash

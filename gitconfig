@@ -1,13 +1,20 @@
 # Ref.: http://git-scm.com/docs/git-config
-# vim: set noet:
+# vi: noet
 [core]
 	autocrlf = false
 	safecrlf = true
 	# Avoid quoting multibyte characters.
 	quotepath = false
 [color]
-	ui = true
+	ui = auto
 	diff = auto
+[color "grep"]
+	filename = magenta
+	linenumber = green
+	match = red bold
+	separator = cyan
+[diff]
+	renameLimit = 1000
 [difftool]
 	prompt = false
 [mergetool]
@@ -18,17 +25,204 @@
 	path = ~/.gitconfig.local
 [alias]
 	ad = add
+	bdf = brdiff
+	# Branching point
+	bp = div
 	br = branch
+	#brdiff = "!f(){ git diff --stat $1..$2 -- $(< <(git diff --name-only $3...$1) <(git diff --name-only $3...$2) | sort -u); }; f"
+	brdiff = "!f(){ git diff --stat $1..$2 -- $(cat <(git diff --name-only $3...$1) <(git diff --name-only $3...$2) | sort -u); }; f"
+	# Branch patch diff
+	brpdiff = "!f(){ \
+		while read l; do \
+			if [[ -n $(diff -q <(git diff $3...$1 -- \"${l}\" | tail -n +5 | sed 's/^@@ [-+, 0-9]* @@//') <(git diff $2^2..$2 -- ${l} | tail -n +5 | sed 's/^@@ .* @@//')) ]]; then \
+				echo $l; \
+			fi; \
+		done < <(git diff --name-only $1..$2 -- $(cat <(git diff --name-only $3...$1) <(git diff --name-only $3...$2) | sort -u)); \
+	}; f"
+	# Gone branch: List branches those upstreams were deleted
+	brg = "!f(){ git branch --format='%(upstream:trackshort):%(refname:short):%(upstream)' | grep -E '^:.+:.+' | cut -d':' -f2; }; f"
 	cam = commit --amend
-	camm = commit --amend -C@
+	camm = cam -C@
+	chmod = "!f(){ mode=$1; shift; git update-index --add --chmod=${mode} \"$*\"; }; f"
 	ci = commit
 	co = checkout
+	confl = conflicts
+	# Ref.: https://stackoverflow.com/questions/3065650/whats-the-simplest-way-to-list-conflicted-files-in-git
+	conflicts = diff --name-only --diff-filter=U
+	cp = cherry-pick
 	dc = diff --cached
+	df = diff
+	dfm = diff --merge-base
+	dfs = diff --stat
+	dfsm = diff --stat --merge-base
+	# Divergence point
+	div = "!f() { git log --color=always --oneline $1..$2 | tail -1; }; f"
+	# Ref.: https://stackoverflow.com/questions/1527234/finding-a-branch-point-with-git
+	#div = "!f() { git rev-list --boundary --oneline --date-order --reverse $1...$2 | grep '^-' | cut -c2-; }; f"
+	dt = difftool
+	fe = fetch
+	# Find branch of a commit
+	# Ref.: https://stackoverflow.com/questions/2706797/finding-what-branch-a-git-commit-came-from
+	find-branch = branch -a --contains
+	fp = fetch -p
+	# Fuzzy find
+	ffind = "!f() { \
+		local tree pattern; \
+		if (( $# <= 1 )); then \
+			tree=HEAD; \
+			pattern=\"$1\"; \
+		else \
+			tree=$1; \
+			pattern=\"$2\"; \
+		fi; \
+		local paths=($(git ls ${tree} | grep -Ei \"${pattern}\")); \
+		if (( ${#paths[@]} == 0 )); then \
+			echo 'error: no file found.' >&2; \
+			exit 1; \
+		fi; \
+		printf ${tree}:'%s\n' \"${paths[@]}\"; \
+	}; f"
+	# Fuzzy show
+	fshow = "!f() { \
+		local revs; \
+		revs=($(git ffind "$@")) || exit 1; \
+		if (( ${#revs[@]} > 1 )); then \
+			echo 'error: ambiguous file path.' >&2; \
+			printf '%s\n' \"${revs[@]}\" >&2; \
+			exit 1; \
+		fi; \
+		echo \"Found: ${revs[0]}\" >&2; \
+		local hash=$(git rev-parse --short ${revs[0]%%:*}); \
+		local filename=$(basename ${revs[0]##*:}); \
+		local copath; \
+		copath=$(mktemp -t \"${filename%.*}-${hash}.XXX.${filename##*.}\") || exit 1; \
+		{ \
+			git show \"${revs[0]}\" >\"${copath}\"; \
+			eval $(git config core.editor) \"${copath}\"; \
+			rm \"${copath}\"; \
+		} & \
+	}; f"
 	graph = log --graph --format='%C(auto)%h%d %an %s'
+	lo = log -M3
+#	ls = ls-tree -r --name-only
+#		cd -- ${GIT_PREFIX:-.}; \
+	ls = "!f() { \
+		(( $# == 0 )) && local tree=@; \
+		git ls-tree -r --name-only --full-name --full-tree ${tree:-} \"$@\"; \
+	}; f"
+	mb = merge-base
+	# Find merge commit
+	mc = "!f() { git log --color=always --oneline $1..$2 --ancestry-path --merges | tail -1; }; f"
+	me = merge
+	# Merge point
+	mp = mc
+	mt = mergetool
+	pu = pull
+	ph = push
+	phf = push --force-with-lease
+	# Push current branch with --set-upstream
+	phu = "!f() { git push -u origin $(git branch --show-current); }; f"
+	pp = pull -p
+#	re = restore
+#	res = restore # Deprecated
+	rs = reset
 	root = rev-parse --show-toplevel
-	st = status --short
+	sl = stash list
+	sls = "!f() { \
+		if (( $# == 0 )); then \
+			git stash list; \
+		else \
+			local n=$1; \
+			shift; \
+			git show stash@{$n} \"$@\"; \
+		fi; \
+	}; f"
 	sre = svn rebase
-	sls = "!f() { if [ $# -eq 0 ]; then git stash list; else n=$1; shift; git show stash@{$n} \"$@\"; fi; }; f"
+	s = st
+	sb = show-branch
+	sf = show --stat --pretty=fuller
+	sh = show
+	# Status log: Find deleted files
+	slog = log --name-status --format='%C(auto)%h%d %an %<(80,trunc)%s'
+	sq = "!f() { \
+		local mb=\"$(git merge-base master @)\"; \
+		if [[ \"$(git rev-parse @^)\" == \"$mb\" ]]; then \
+			echo 'no need to squash.'; \
+			return; \
+		elif git diff --cached --numstat | grep -q .; then \
+			echo 'error: cannot squash: Your index contains uncommitted changes.'; \
+			return; \
+		fi; \
+		echo 'Squash following'; \
+		git graph $mb..; \
+		git reset --soft $mb; \
+		git commit \"$@\" || git reset ORIG_HEAD; \
+	}; f"
+	#sq = "!f() { git reset; git reset --soft $(git merge-base master @); git commit \"$@\"; }; f"
+#	sqon = "!f(){ \
+#		GIT_SEQUENCE_EDITOR='g(){ echo $s; echo $1; return 1; }; g' git rebase -i master; \
+#	}; f"
+#	sqon = "!f(){ \
+#		GIT_SEQUENCE_EDITOR='g(){ sed -i 2,\\$s/^pick/squash/ $1; grep -v -e ^# -e ^$ $1; return 1; }; g' git rebase -i master; \
+#	}; f"
+	# Squash onto
+	# Usage:
+	#	git sqon
+	#	git sqon branch-name
+	sqon = "!f(){ \
+		GIT_SEQUENCE_EDITOR=\"g(){ sed -i '2,\\$s/^pick/squash/' \\$1; }; g\" git rebase -i \"$@\"; \
+	}; f"
+#	sqon = "!f(){ \
+#		GIT_SEQUENCE_EDITOR=\"g(){ sed -i '2,\\$s/^pick/squash/' \\$1; }; g\" git rebase -i \"$@\" || git rebase --abort; \
+#	}; f"
+#	sqon = "!f(){ \
+#		g(){ sed -i '2,$s/^pick/squash/' $1; grep -v -e '^#' -e '^$' $1; return 1; }; \
+#		GIT_SEQUENCE_EDITOR=g git rebase -i master; \
+#	}; f"
+#	sqon = "!f(){ \
+#		GIT_SEQUENCE_EDITOR=\"g(){ sed -i '2,\$s/^pick/squash/' \$1; grep -v -e '^#' -e '^\$' \$1; return 1; }; g\" git rebase -i master \
+#	}; f"
+#	sqon = "!g(){ \
+#		sed -i '2,$s/^pick/squash/' $1; grep -v -e '^#' -e '^$' $1; return 1; \
+#	}; f(){ \
+#		GIT_SEQUENCE_EDITOR=g git rebase -i master; \
+#	}; f"
+# GIT_SEQUENCE_EDITOR="f(){ sed -i '2,\$s/^pick/squash/' \$1; grep -v -e '^#' -e '^\$' \$1; return 1; }; f" git rebase -i master
+	st = status -sb
 	sta = stash
+	stap = stash pop
+	sw = switch
+	# Ref.: https://stackoverflow.com/questions/3216360/merge-update-and-pull-git-branches-without-using-checkouts
+	sy = syn
+	#syn = fetch origin master:master
+	# Sync branch
+	# Usage:
+	#	git syn
+	#	git syn branch-name
+	# リモートブランチの名前が異なると、以下では駄目かも。
+	syn = "!f(){ \
+		local br=${1:-$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)}; \
+		local old=$(git rev-parse $br); \
+		echo \"Synchronizing: $br ($(git rev-parse --short $old))\"; \
+		git fetch origin $br:$br && \
+			([[ $old == $(git rev-parse $br) ]] && echo \"Already up to date.\" || echo \"Updated $(git rev-parse --short $old)..$(git rev-parse --short $br)  $br\"); \
+	}; f"
+	tore = restore
+	#upstream = rev-parse --abbrev-ref --symbolic-full-name @{u}
+	upstream = "!f() { \
+		if (( $# == 0 )); then \
+			git rev-parse --abbrev-ref --symbolic-full-name @{u}; \
+		else \
+			git rev-parse --abbrev-ref --symbolic-full-name \"$@\"; \
+		fi; \
+	}; f"
 [status]
 	relativePaths = true
+[rebase]
+	autoStash = true
+	autoSquash = true
+	missingCommitsCheck = warn
+[push]
+	default = simple
+[pull]
+	ff = only
