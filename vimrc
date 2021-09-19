@@ -30,7 +30,7 @@ set encoding=utf-8
 set showcmd
 set showmatch
 set laststatus=2
-set statusline=#%n\ %<%f\ %m%y\ %q%([%H%R%W]%)%={%{v:register}}\ '0x%B'\ [%{&ff}%{&eol?'':',noeol'},%{strlen(&fenc)?&fenc:'-'}%{&bomb?'+BOM':''}]\ %-20.(%l/%LL,\ %vC%)%P
+set statusline=%m#%n\ %<%f\ %y\ %q%([%H%R%W]%)%={%{v:register}}\ '0x%B'\ [%{&ff}%{&eol?'':',noeol'},%{strlen(&fenc)?&fenc:'-'}%{&bomb?'+BOM':''}]\ %-20.(%l/%LL,\ %vC%)%P
 set cursorline
 set wildmenu
 set wildmode=list:longest,full
@@ -46,6 +46,8 @@ set backspace=indent,eol,start
 set tags+=./tags;
 set history=1000
 "set autochdir
+"let mapleader = "\<SPACE>"
+let mapleader = ","
 
 " Tab
 set tabstop=4 softtabstop=4 shiftwidth=4
@@ -64,6 +66,13 @@ set incsearch
 set ignorecase
 set smartcase
 set wrapscan
+"nnoremap / /\v
+"nnoremap ? ?\v
+"cnoremap %s/ %s/\v
+"cnoremap %s; %s;\v
+"nnoremap <leader>s :s/\v
+"nnoremap <leader>ms :%s/\v
+"vnoremap <leader>s :s/\v
 
 " For Japanese
 set ambiwidth=double
@@ -97,8 +106,12 @@ nnoremap <silent> <Esc><Esc> :<C-U>nohlsearch<CR>
 nnoremap <silent> <F2> :Lexplore<CR>
 nnoremap <silent> <leader>e :Explore<CR>
 let g:netrw_liststyle = 3
-nnoremap <F5> :buffers<CR>:b<Space>
-nnoremap <leader>b :buffers<CR>:b<Space>
+"nnoremap <F5> :buffers<CR>:b<Space>
+nnoremap <leader>l :ls<CR>:b<Space>
+nnoremap <Leader>b :bp<CR>
+nnoremap <Leader>f :bn<CR>
+" Delete a buffer without losing the split window.
+" Ref: https://stackoverflow.com/questions/1444322/how-can-i-close-a-buffer-without-closing-the-window/26719470
 nnoremap <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
 
 " Additional undo revision
