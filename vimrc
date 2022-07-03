@@ -79,11 +79,18 @@ set ambiwidth=double
 set display+=lastline
 
 " Color
+" Ref: https://vim-jp.org/vim-users-jp/2009/07/12/Hack-40.html
 augroup highlightIdegraphicSpace
   autocmd!
   autocmd ColorScheme * highlight IdeographicSpace term=underline ctermbg=DarkGreen guibg=DarkGreen
   autocmd VimEnter,WinEnter,BufRead * match IdeographicSpace /　/
 augroup END
+
+" Highlight non-printable character
+" Ref: https://stackoverflow.com/questions/16987362/how-to-get-vim-to-highlight-non-ascii-characters
+" Example: Alt+Enter -> 0x8D
+"highlight nonascii guibg=Red ctermbg=1 term=standout
+"au VimEnter,WinEnter,BufRead * syntax match nonascii "[^\u0000-\u00FF]"
 
 if has('multi_byte_ime')
   autocmd ColorScheme * highlight default CursorIM guifg=NONE guibg=Red
