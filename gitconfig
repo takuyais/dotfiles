@@ -23,6 +23,8 @@
 	encoding = utf-8
 [include]
 	path = ~/.gitconfig.local
+[init]
+	defaultBranch = main
 [alias]
 	ad = add
 	bdf = brdiff
@@ -50,6 +52,7 @@
 	# Ref.: https://stackoverflow.com/questions/3065650/whats-the-simplest-way-to-list-conflicted-files-in-git
 	conflicts = diff --name-only --diff-filter=U
 	cp = cherry-pick
+	crlf = add --renormalize :/
 	dc = diff --cached
 	df = diff
 	dfm = diff --merge-base
@@ -65,54 +68,18 @@
 	# Ref.: https://stackoverflow.com/questions/2706797/finding-what-branch-a-git-commit-came-from
 	find-branch = branch -a --contains
 	fp = fetch -p
-	# Fuzzy find
-	ffind = "!f() { \
-		local tree pattern; \
-		if (( $# <= 1 )); then \
-			tree=HEAD; \
-			pattern=\"$1\"; \
-		else \
-			tree=$1; \
-			pattern=\"$2\"; \
-		fi; \
-		local paths=($(git ls ${tree} | grep -Ei \"${pattern}\")); \
-		if (( ${#paths[@]} == 0 )); then \
-			echo 'error: no file found.' >&2; \
-			exit 1; \
-		fi; \
-		printf ${tree}:'%s\n' \"${paths[@]}\"; \
-	}; f"
-	# Fuzzy show
-	fshow = "!f() { \
-		local revs; \
-		revs=($(git ffind "$@")) || exit 1; \
-		if (( ${#revs[@]} > 1 )); then \
-			echo 'error: ambiguous file path.' >&2; \
-			printf '%s\n' \"${revs[@]}\" >&2; \
-			exit 1; \
-		fi; \
-		echo \"Found: ${revs[0]}\" >&2; \
-		local hash=$(git rev-parse --short ${revs[0]%%:*}); \
-		local filename=$(basename ${revs[0]##*:}); \
-		local copath; \
-		copath=$(mktemp -t \"${filename%.*}-${hash}.XXX.${filename##*.}\") || exit 1; \
-		{ \
-			git show \"${revs[0]}\" >\"${copath}\"; \
-			eval $(git config core.editor) \"${copath}\"; \
-			rm \"${copath}\"; \
-		} & \
-	}; f"
-	graph = log --graph --format='%C(auto)%h%d %an %s'
+	ff = fuzzy-find
+	ffind = fuzzy-find
+	fs = fuzzy-show
+	fshow = fuzzy-show
+	graph = log --graph --format='%C(auto)%h%d %as %an %s'
 	lo = log -M3
+	ls = ls-tracked
 #	ls = ls-tree -r --name-only
 #		cd -- ${GIT_PREFIX:-.}; \
-	ls = "!f() { \
-		(( $# == 0 )) && local tree=@; \
-		git ls-tree -r --name-only --full-name --full-tree ${tree:-} \"$@\"; \
-	}; f"
 	mb = merge-base
 	# Find merge commit
-	mc = "!f() { git log --color=always --oneline $1..$2 --ancestry-path --merges | tail -1; }; f"
+	mc = "!f() { git ss $(git log --pretty=format:'%H' $1..${2:-$(git rev-parse --symbolic-full-name refs/remotes/origin/HEAD || git config init.defaultBranch)} --ancestry-path --merges | tail -1); }; f"
 	me = merge
 	# Merge point
 	mp = mc
@@ -143,21 +110,11 @@
 	sf = show --stat --pretty=fuller
 	sh = show
 	# Status log: Find deleted files
-	slog = log --name-status --format='%C(auto)%h%d %an %<(80,trunc)%s'
-	sq = "!f() { \
-		local mb=\"$(git merge-base master @)\"; \
-		if [[ \"$(git rev-parse @^)\" == \"$mb\" ]]; then \
-			echo 'no need to squash.'; \
-			return; \
-		elif git diff --cached --numstat | grep -q .; then \
-			echo 'error: cannot squash: Your index contains uncommitted changes.'; \
-			return; \
-		fi; \
-		echo 'Squash following'; \
-		git graph $mb..; \
-		git reset --soft $mb; \
-		git commit \"$@\" || git reset ORIG_HEAD; \
-	}; f"
+	slog = log --name-status --format='%C(auto)%h%d %as %an %<(80,trunc)%s'
+	sq = squash
+#		git log --oneline $mb..; \
+#		git reset --soft $mb; \
+#		git commit \"$@\" || git reset ORIG_HEAD; \
 	#sq = "!f() { git reset; git reset --soft $(git merge-base master @); git commit \"$@\"; }; f"
 #	sqon = "!f(){ \
 #		GIT_SEQUENCE_EDITOR='g(){ echo $s; echo $1; return 1; }; g' git rebase -i master; \
@@ -188,6 +145,7 @@
 #		GIT_SEQUENCE_EDITOR=g git rebase -i master; \
 #	}; f"
 # GIT_SEQUENCE_EDITOR="f(){ sed -i '2,\$s/^pick/squash/' \$1; grep -v -e '^#' -e '^\$' \$1; return 1; }; f" git rebase -i master
+	ss = show -s
 	st = status -sb
 	sta = stash
 	stap = stash pop
@@ -195,27 +153,9 @@
 	# Ref.: https://stackoverflow.com/questions/3216360/merge-update-and-pull-git-branches-without-using-checkouts
 	sy = syn
 	#syn = fetch origin master:master
-	# Sync branch
-	# Usage:
-	#	git syn
-	#	git syn branch-name
-	# リモートブランチの名前が異なると、以下では駄目かも。
-	syn = "!f(){ \
-		local br=${1:-$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)}; \
-		local old=$(git rev-parse $br); \
-		echo \"Synchronizing: $br ($(git rev-parse --short $old))\"; \
-		git fetch origin $br:$br && \
-			([[ $old == $(git rev-parse $br) ]] && echo \"Already up to date.\" || echo \"Updated $(git rev-parse --short $old)..$(git rev-parse --short $br)  $br\"); \
-	}; f"
+	syn = synch-branch
 	tore = restore
-	#upstream = rev-parse --abbrev-ref --symbolic-full-name @{u}
-	upstream = "!f() { \
-		if (( $# == 0 )); then \
-			git rev-parse --abbrev-ref --symbolic-full-name @{u}; \
-		else \
-			git rev-parse --abbrev-ref --symbolic-full-name \"$@\"; \
-		fi; \
-	}; f"
+	upstream = "!f() { git rev-parse --abbrev-ref --symbolic-full-name ${1:-HEAD}@{u}; }; f"
 [status]
 	relativePaths = true
 [rebase]
@@ -226,3 +166,6 @@
 	default = simple
 [pull]
 	ff = only
+# Config for my subcommands
+[git-fuzzy-show]
+	async = true

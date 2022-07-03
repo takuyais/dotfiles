@@ -31,14 +31,15 @@
 	helper = manager
 #[credential "helperselector"]
 #	selected = wincred
+# Config for my subcommands
 [tgit]
-	path = "C:/Program Files/TortoiseGit/bin/TortoiseGitProc.exe"
+	tortoiseGitProcPath = "C:/Program Files/TortoiseGit/bin/TortoiseGitProc.exe"
 [tgit "alias"]
 	dfs = showcompare
 	# fuzzy blame
 	fblame = "!f() { \
 		local revs; \
-		revs=($(git ffind "$@")) || exit 1; \
+		revs=($(git fuzzy-find "$@")) || exit 1; \
 		if (( ${#revs[@]} > 1 )); then \
 			echo 'error: ambiguous file path.' >&2; \
 			printf '%s\\n' \"${revs[@]}\" >&2; \
