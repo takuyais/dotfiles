@@ -80,6 +80,7 @@ alias svnurl='svn info --show-item=url'
 
 alias ga="git add"
 alias gs="git st"
+alias gsw="git sw"
 alias gd="git dfs"
 alias gdm="git dfs origin/master..."
 
