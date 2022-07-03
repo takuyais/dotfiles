@@ -36,6 +36,7 @@
 	tortoiseGitProcPath = "C:/Program Files/TortoiseGit/bin/TortoiseGitProc.exe"
 [tgit "alias"]
 	dfs = showcompare
+	fb = fblame
 	# fuzzy blame
 	fblame = "!f() { \
 		local revs; \
