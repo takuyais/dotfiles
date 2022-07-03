@@ -5,6 +5,14 @@
 
 IME_TOOL_TIP_NUM = 20
 
+; Reset modifier state
+; https://www.autohotkey.com/boards/viewtopic.php?t=61308
+For Each, Modifier in ["Shift","Control","LWin","RWin","Alt"]
+    If GetKeyState(Modifier) && !GetKeyState(Modifier, "P") {
+        Send, {%Modifier% Up}
+    }
+Return
+
 ; Show IME status with tooltip
 SetTimer, IMEToolTip, 50 ; Adjust this period to suppress flicker of the IMEToolTip
 
@@ -64,7 +72,7 @@ GetWinHandleByTitle(title="A") {
 F1::Return
 
 ; Recovery for Alt+vk19
-!Esc::vk19
+;!Esc::vk19
 
 ; Copy or cut as plain text
 ;^+x::
@@ -98,7 +106,8 @@ Return
 #If WinActive("ahk_exe POWERPNT.EXE")
 ; Show format shape dialog
 ^1::
-Send, !ho
+;Send, {Ctrl up}{Alt}jdsz
+Send, {Ctrl up}!ho
 Return
 #If
 
