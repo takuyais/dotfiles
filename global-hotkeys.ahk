@@ -7,7 +7,7 @@ IME_TOOL_TIP_NUM = 20
 
 ; Reset modifier state
 ; https://www.autohotkey.com/boards/viewtopic.php?t=61308
-For Each, Modifier in ["Shift","Control","LWin","RWin","Alt"]
+For Each, Modifier in ["Shift", "Control", "LWin", "RWin", "Alt"]
     If GetKeyState(Modifier) && !GetKeyState(Modifier, "P") {
         Send, {%Modifier% Up}
     }
@@ -106,10 +106,34 @@ Return
 #If WinActive("ahk_exe POWERPNT.EXE")
 ; Show format shape dialog
 ^1::
-;Send, {Ctrl up}{Alt}jdsz
-Send, {Ctrl up}!ho
+;Send, {Ctrl Up}{Alt}jdsz
+Send, {Ctrl Up}!ho
 Return
 #If
+
+; Three finger Click and Drag gesture
+; https://stackoverflow.com/questions/65298421/autohotkey-three-finger-dragging-script-causing-minor-issue-how-to-fix
+DragEnabled := false
++^#F22::
+    if (DragEnabled) {
+        Click, Up
+    } else {
+        Click, Down
+    }
+    DragEnabled := !DragEnabled
+Return
+
+#If DragEnabled
+LButton::
+    Click, Up
+    DragEnabled := false
+Return
+
+~Esc::
+    DragEnabled := false
+Return
+#If
+
 
 ;#Include %A_ScriptDir%
 #Include *i hhkb.ahk
