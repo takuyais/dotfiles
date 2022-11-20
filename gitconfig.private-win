@@ -4,7 +4,7 @@
 	name = takuyais
 	email = @takuyais
 [core]
-	editor = 'C:/Program Files/Vim/vim82/gvim.exe'
+	editor = 'C:/Program Files/Vim/vim90/gvim.exe'
 #	editor = code --new-window --wait
 	excludesFile = ~/.gitignore_global
 	whitespace = trailing-space,space-before-tab,cr-at-eol
@@ -28,10 +28,8 @@
 #	postBuffer = 104857600 # 100MiB
 #	sslVerify = false
 [credential]
-	helper = manager
-#[credential "helperselector"]
-#	selected = wincred
-# Config for my subcommands
+	helper = manager-core
+# Config for tgit
 [tgit]
 	tortoiseGitProcPath = "C:/Program Files/TortoiseGit/bin/TortoiseGitProc.exe"
 [tgit "alias"]

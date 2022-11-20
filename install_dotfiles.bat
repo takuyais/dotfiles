@@ -5,7 +5,7 @@ cd /d "%USERPROFILE%"
 mklink .bashrc dotfiles\bashrc
 mklink .aliases_tortoisegit dotfiles\aliases_tortoisegit
 mklink .gitconfig dotfiles\gitconfig
-mklink .gitconfig.local dotfiles\gitconfig.local
+mklink .gitconfig.local dotfiles\gitconfig.private-win
 mklink _vimrc dotfiles\vimrc
 mklink _gvimrc dotfiles\gvimrc
 mkdir vimfiles\swap
@@ -14,8 +14,8 @@ mklink ctags.d\config.ctags ..\dotfiles\config.ctags
 
 cd /d "%APPDATA%\Code\User"
 @if not errorlevel 1 (
-    mklink settings.json "%USERPROFILE%\dotfiles\settings.json"
-    mklink keybindings.json "%USERPROFILE%\dotfiles\keybindings.json"
+  mklink settings.json "%USERPROFILE%\dotfiles\settings.json"
+  mklink keybindings.json "%USERPROFILE%\dotfiles\keybindings.json"
 )
 
 @rem reg import NamingTemplates.reg
