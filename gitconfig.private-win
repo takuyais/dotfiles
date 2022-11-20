@@ -28,7 +28,7 @@
 #	postBuffer = 104857600 # 100MiB
 #	sslVerify = false
 [credential]
-	helper = manager-core
+	helper = manager
 # Config for tgit
 [tgit]
 	tortoiseGitProcPath = "C:/Program Files/TortoiseGit/bin/TortoiseGitProc.exe"
