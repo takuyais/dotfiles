@@ -124,7 +124,7 @@ DragEnabled := false
 Return
 
 #If DragEnabled
-LButton::
+*LButton::
     Click, Up
     DragEnabled := false
 Return
