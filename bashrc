@@ -7,7 +7,9 @@ HISTSIZE=1000
 HISTFILESIZE=20000
 
 # Prompt
-# Inspired by: https://github.com/git-for-windows/MSYS2-packages/blob/master/filesystem/bash.bashrc, git-prompt.sh
+# Inspired by following files.
+#   https://github.com/msys2/MSYS2-packages/blob/17ce1e4eaf9b93bd7bd2b6eed25a7defe2fc466c/filesystem/bash.bashrc
+#   https://github.com/git-for-windows/build-extra/blob/22bfd3f38a60693e67abda8d205ec5a4cd4f40ce/git-extra/git-prompt.sh
 if [[ -n "${MSYSTEM}" ]]; then
   # if we have the "High Mandatory Level" group, it means we're elevated
   if [[ -n "$(command -v getent)" ]] && id -G | grep -q "$(getent -w group 'S-1-16-12288' | cut -d: -f2)"
@@ -30,12 +32,14 @@ else
   fi
   PS1="$PS1"'\n\$ '
 fi
+export PS4='+(${BASH_SOURCE}${FUNCNAME:+.$FUNCNAME()}:${LINENO}): '
 
-GIT_PS1_SHOWDIRTYSTATE=1
+# Disable some features due to extremely slow __git_ps1 in windows.
 GIT_PS1_SHOWSTASHSTATE=1
-GIT_PS1_SHOWUNTRACKEDFILES=1
-GIT_PS1_SHOWUPSTREAM='verbose'
-GIT_PS1_DESCRIBE_STYLE='cantains'
+#GIT_PS1_SHOWUNTRACKEDFILES=1
+#GIT_PS1_SHOWUPSTREAM='verbose name'
+#GIT_PS1_SHOWCONFLICTSTATE='yes'
+GIT_PS1_DESCRIBE_STYLE='contains'
 
 case "${TERM}" in
   xterm*|rxvt*)
@@ -51,9 +55,9 @@ case "${OSTYPE}" in
     alias ls='ls -FG'
     ;;
   msys|cygwin)
-    PATH="${PATH}:$(cygpath "$(cmd /c "echo %LOCALAPPDATA%")")/Programs/Microsoft VS Code/bin"
+    PATH="${PATH}:$(cygpath "$(${COMSPEC} /c "echo %LOCALAPPDATA%")")/Programs/Microsoft VS Code/bin"
     alias ls='ls -F --color=auto --show-control-chars'
-    alias gvim="'C:/Program Files/Vim/vim82/gvim.exe'"
+    alias gvim="'C:/Program Files/Vim/vim90/gvim.exe'"
     source ~/.aliases_tortoisegit
     ;;
   linux*)
