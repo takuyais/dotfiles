@@ -152,7 +152,6 @@
 	sw = switch
 	# Ref.: https://stackoverflow.com/questions/3216360/merge-update-and-pull-git-branches-without-using-checkouts
 	sy = syn
-	#syn = fetch origin master:master
 	syn = synch-branch
 	tore = restore
 	upstream = "!f() { git rev-parse --abbrev-ref --symbolic-full-name ${1:-HEAD}@{u}; }; f"
